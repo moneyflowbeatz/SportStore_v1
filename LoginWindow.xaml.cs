@@ -1,4 +1,5 @@
-﻿using SportStore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore;
+using SportStore.Infrastructure;
 using SportStore.Models;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,12 @@ namespace SportStore
             loginButton.IsEnabled = true;
         }
 
+        private void guestButtonClick(object sender, RoutedEventArgs e)
+        {
+            new MainWindow(null).Show();
+            this.Close();
+        }
+
         private void loginButton_Click(object sender, RoutedEventArgs e)
         {
             using (SportStoreContext db = new SportStoreContext())
@@ -56,12 +63,12 @@ namespace SportStore
                     }
                 }
 
-                User user = db.Users.Where(u => u.Login == loginBox.Text && u.Password == passwordBox.Password).FirstOrDefault() as User;
+                User user = db.Users.Where(u => u.Login == loginBox.Text && u.Password == passwordBox.Password).Include(u => u.RoleNavigation).FirstOrDefault() as User;
 
                 // admin
                 if (user != null && verify)
                 {
-                    new MainWindow().Show();
+                    new MainWindow(user).Show();
                     this.Close();
                 }
                 else
