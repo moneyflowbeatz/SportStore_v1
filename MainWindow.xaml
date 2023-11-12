@@ -73,6 +73,17 @@
                          TextChanged="searchBox_SelectionChanged" />
             </StackPanel>
 
+            <StackPanel Margin="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Grid.Column="4">
+                <TextBlock Margin="1"
+                           TextAlignment="Left"
+                           Name="countProducts"
+                           Height="40" Width="150"
+                           Text="Количество: "/>
+            </StackPanel>
+
         </Grid>
 
         <ListView Grid.Row ="1"

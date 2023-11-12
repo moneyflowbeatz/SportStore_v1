@@ -27,10 +27,11 @@ namespace SportStore
 
             InitializeComponent();
 
-
+            
             statusUser.Text = user.RoleNavigation.Name;
             using (SportStoreContext db = new SportStoreContext())
             {
+                countProducts.Text = $"Количество: {db.Products.Count()}";
                 if (user != null)
                 {
                     statusUser.Text = user.RoleNavigation.Name;
@@ -176,6 +177,7 @@ namespace SportStore
                 }
 
                 productlistView.ItemsSource = currentProducts;
+                countProducts.Text = $"Количество: {currentProducts.Count} из {db.Products.ToList().Count}";
             }
         }
     }
