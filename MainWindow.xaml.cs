@@ -46,6 +46,10 @@ namespace SportStore
 
                 List<string> sortList = new List<string>() { "По возрастанию цены", "По убыванию цены" };
                 sortUserComboBox.ItemsSource = sortList.ToList();
+
+                List<string> filtertList = db.Products.Select(u => u.Manufacturer).Distinct().ToList();
+                filtertList.Insert(0, "Все производители");
+                filterUserComboBox.ItemsSource = filtertList.ToList();
             }
 
 
@@ -53,8 +57,7 @@ namespace SportStore
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            new LoginWindow().Show();
-            this.Close();
+            
         }
 
 
@@ -74,6 +77,56 @@ namespace SportStore
             }
         }
 
+
+
+
+        private void filterUserComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            using (SportStoreContext db = new SportStoreContext())
+            {
+                if (db.Products.Select(u => u.Manufacturer).Distinct().ToList().Contains(filterUserComboBox.SelectedValue))
+                {
+                    productlistView.ItemsSource = db.Products.Where(u => u.Manufacturer == filterUserComboBox.SelectedValue).ToList();
+                }
+                else
+                {
+                    productlistView.ItemsSource = db.Products.ToList();
+                }
+            }
+        }
+
+
+
+
+        private void searchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            using (SportStoreContext db = new SportStoreContext())
+            {
+                if (searchBox.Text.Length > 0)
+                {
+                    productlistView.ItemsSource = db.Products.Where(u => u.Name.Contains(searchBox.Text) || u.Description.Contains(searchBox.Text)).ToList();
+                }
+
+            }
+        }
+
+        private void searchBox_SelectionChanged(object sender, TextChangedEventArgs e)
+        {
+            using (SportStoreContext db = new SportStoreContext())
+            {
+                if (searchBox.Text.Length > 0)
+                {
+                    productlistView.ItemsSource = db.Products.Where(u => u.Name.Contains(searchBox.Text) || u.Description.Contains(searchBox.Text)).ToList();
+                }
+
+            }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            new LoginWindow().Show();
+            this.Close();
+        }
     }
 
 
