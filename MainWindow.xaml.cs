@@ -23,20 +23,33 @@ namespace SportStore
     {
         public MainWindow(User user)
         {
+
             InitializeComponent();
 
+            statusUser.Text = user.RoleNavigation.Name;
             using (SportStoreContext db = new SportStoreContext())
             {
                 if (user != null)
                 {
+                    statusUser.Text = user.RoleNavigation.Name;
                     MessageBox.Show($"{user.RoleNavigation.Name}: {user.Surname} {user.Name} {user.Patronymic}. \r\t");
                 }
                 else
                 {
+                    statusUser.Text = "Гость";
                     MessageBox.Show("Гость");
                 }
-
+                
+                productlistView.ItemsSource = db.Products.ToList();
             }
+
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            new LoginWindow().Show();
+            this.Close();
         }
     }
 }
