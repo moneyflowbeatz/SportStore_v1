@@ -21,10 +21,12 @@ namespace SportStore
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow(User user)
         {
 
             InitializeComponent();
+
 
             statusUser.Text = user.RoleNavigation.Name;
             using (SportStoreContext db = new SportStoreContext())
