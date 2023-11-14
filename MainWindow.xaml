@@ -213,10 +213,15 @@
                             Content="Добавить товар" Height="20" Width="100"
                             Click="addUserButtonClick"/>
             </StackPanel>
-
+            <Button Name="deleteUser"
+        Margin="5"
+        Content="Удалить товар"
+        Height="20"
+        Width="100"
+        Click="delUserButton"/>
         </StackPanel>
 
-
+        
     </Grid>
 
 

@@ -99,4 +99,6 @@ public partial class SportStoreContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+    public virtual DbSet<RelatedProduct> RelatedProducts { get; set; }
 }
