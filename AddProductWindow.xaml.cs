@@ -29,123 +29,167 @@ namespace SportStore
 
         public decimal MaxDiscount { get; set; }
         public decimal DiscountAmount { get; set; }
-        public AddProductWindow()
+        public AddProductWindow(Product product)
         {
             InitializeComponent();
+            this.Title = "Добавление товара";
+
             using (SportStoreContext db = new SportStoreContext())
             {
                 categoryBox.ItemsSource = db.Products.Select(p => p.Category).Distinct().ToList();
             }
+
+            if (product != null)
+            {
+                currentProduct = product;
+                this.Title = "Редактирование товара";
+                DataContext = currentProduct;
+            }
+            else
+            {
+                idPanel.Visibility = Visibility.Hidden;
+            }
+
         }
 
         private void saveProductButtonClick(object sender, RoutedEventArgs e)
         {
+
             using (SportStoreContext db = new SportStoreContext())
             {
-                #region Валидация
-                StringBuilder errors = new StringBuilder();
-                if (string.IsNullOrWhiteSpace(articleBox.Text))
-                    errors.AppendLine("Укажите артикль");
-                if (string.IsNullOrWhiteSpace(nameBox.Text))
-                    errors.AppendLine("Укажите название");
-                if (string.IsNullOrWhiteSpace(descriptionBox.Text))
-                    errors.AppendLine("Укажите описание");
-                if (string.IsNullOrWhiteSpace(categoryBox.Text))
-                    errors.AppendLine("Укажите категорию");
-                if (string.IsNullOrWhiteSpace(manufacturerBox.Text))
-                    errors.AppendLine("Укажите производителя");
-                if (string.IsNullOrWhiteSpace(costBox.Text))
-                    errors.AppendLine("Укажите цену");
 
-                if (string.IsNullOrWhiteSpace(discountAmountBox.Text))
-                    errors.AppendLine("Укажите размер скидки");
-                if (string.IsNullOrWhiteSpace(quantityInStockBox.Text))
-                    errors.AppendLine("Укажите количество на складе");
-                if (string.IsNullOrWhiteSpace(statusBox.Text))
-                    errors.AppendLine("Укажите статус");
-                if (string.IsNullOrWhiteSpace(maxDiscountBox.Text))
-                    errors.AppendLine("Укажите максимальную скидку");
-                if (string.IsNullOrWhiteSpace(supplierBox.Text))
-                    errors.AppendLine("Укажите поставщика");
-                if (string.IsNullOrWhiteSpace(unitBox.Text))
-                    errors.AppendLine("Укажите единицы измерения");
 
-                //
-                if (errors.Length > 0)
+                if (currentProduct == null)
                 {
-                    MessageBox.Show(errors.ToString());
-                    return;
-                }
-                #endregion
-                try
-                {
-                    Product product = new Product()
+
+                    try
                     {
+                        Product product = new Product()
+                        {
+                            ArticleNumber = articleBox.Text,
+                            Name = nameBox.Text,
+                            Description = descriptionBox.Text,
+                            Category = categoryBox.Text,
+                            Photo = imageBox.Text, // "picture.png",
+                            Manufacturer = manufacturerBox.Text,
+                            Cost = Convert.ToDecimal(costBox.Text),
+                            DiscountAmount = Convert.ToInt32(discountAmountBox.Text),
+                            QuantityInStock = Convert.ToInt32(quantityInStockBox.Text),
+                            Status = statusBox.Text,
+                            MaxDiscount = Convert.ToDecimal(maxDiscountBox.Text),
+                            Supplier = supplierBox.Text,
+                            Unit = unitBox.Text
+                        };
 
-                        ArticleNumber = articleBox.Text,
-                        Name = nameBox.Text,
-                        Description = descriptionBox.Text,
-                        Category = categoryBox.Text,
-                        Photo = imageBox.Text, // "picture.png",
-                        Manufacturer = manufacturerBox.Text,
-                        Cost = Convert.ToDecimal(costBox.Text),
-                        DiscountAmount = Convert.ToInt32(discountAmountBox.Text),
-                        QuantityInStock = Convert.ToInt32(quantityInStockBox.Text),
-                        Status = statusBox.Text,
-                        MaxDiscount = Convert.ToDecimal(maxDiscountBox.Text),
-                        Supplier = supplierBox.Text,
-                        Unit = unitBox.Text
 
+                        if (product.Cost < 0)
+                        {
+                            MessageBox.Show("Цена должна быть положительной!");
+                            return;
+                        }
 
-                    };
+                        if (product.QuantityInStock < 0)
+                        {
+                            MessageBox.Show("Количество товаров на складе не может быть меньше нуля!");
+                            return;
+                        }
 
+                        db.Products.Add(product);
 
-                    if (product.Cost < 0)
+                        // если не было выбрано фото
+
+                        if (String.IsNullOrEmpty(newImage))
+                        {
+                            product.Photo = "picture.png";
+                            BitmapImage image = new BitmapImage(new Uri(product.ImagePath));
+                            image.CacheOption = BitmapCacheOption.OnLoad;
+                            imageBoxPath.Source = image;
+                        }
+                        else // если выбрано фото
+                        {
+                            string newRelativePath = $"{System.DateTime.Now.ToString("HHmmss")}_{newImage}";
+                            product.Photo = newRelativePath;
+
+                            File.Copy(newImagePath, System.IO.Path.Combine(Environment.CurrentDirectory, $"images/{newRelativePath}"));
+
+                            BitmapImage image = new BitmapImage(new Uri(product.ImagePath));
+                            image.CacheOption = BitmapCacheOption.OnLoad;
+                            imageBoxPath.Source = image;
+                        }
+
+                        db.SaveChanges();
+
+                        MessageBox.Show("Продукт успешно добавлен!");
+
+                        MainWindow mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+                        (mainWindow.FindName("productlistView") as ListView).ItemsSource = db.Products.ToList();
+                        (mainWindow.FindName("countProducts") as TextBlock).Text = $"Количество: {db.Products.Count()}";
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message.ToString());
+                    }
+
+                }
+                else
+                {
+
+                    if (currentProduct.Cost < 0)
                     {
                         MessageBox.Show("Цена должна быть положительной!");
                         return;
                     }
 
-                    if (product.QuantityInStock < 0)
+                    if (currentProduct.QuantityInStock < 0)
                     {
                         MessageBox.Show("Количество товаров на складе не может быть меньше нуля!");
                         return;
                     }
 
-                    db.Products.Add(product);
 
-                    if (String.IsNullOrEmpty(newImage))
-                    {
-                        product.Photo = "picture.png";
-                        BitmapImage image = new BitmapImage(new Uri(product.ImagePath));
-                        image.CacheOption = BitmapCacheOption.OnLoad;
-                        imageBoxPath.Source = image;
-                    }
-                    else
+                    // если выбрано новое фото
+                    if (newImage != null)
                     {
                         string newRelativePath = $"{System.DateTime.Now.ToString("HHmmss")}_{newImage}";
-                        product.Photo = newRelativePath;
-
-                        File.Copy(newImagePath, System.IO.Path.Combine(Environment.CurrentDirectory, $"images/{newRelativePath}"));
-
-                        BitmapImage image = new BitmapImage(new Uri(product.ImagePath));
-                        image.CacheOption = BitmapCacheOption.OnLoad;
-
-                        imageBoxPath.Source = image;
+                        currentProduct.Photo = newRelativePath;
+                        MessageBox.Show($"Новое фото: {currentProduct.Photo} присвоено!");
+                        File.Copy(newImagePath, System.IO.Path.Combine(Environment.CurrentDirectory, $"images/{currentProduct.Photo}"));
+                        newImage = null;
                     }
 
-                    db.SaveChanges();
 
-                    MessageBox.Show("Продукт успешно добавлен!");
+                    // если есть старое фото, то пытаемся его удалить
+
+                    if (!string.IsNullOrEmpty(oldImage))
+                    {
+                        try
+                        {
+                            File.Delete(oldImage);
+                            MessageBox.Show($"Старое фото: {oldImage} удалено!");
+                            oldImage = null;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message.ToString());
+                        }
+                    }
+
+
+                    try
+                    {
+                        db.Products.Update(currentProduct);
+                        db.SaveChanges();
+                        MessageBox.Show("Продукт успешно обновлен!");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message.ToString());
+                    }
 
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message.ToString());
-                }
-
-
             }
+
         }
 
         private void AddImageToUser(object sender, RoutedEventArgs e)
