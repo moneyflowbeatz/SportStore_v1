@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SportStore", "SportStore.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SF2023UserLib", "..\SF2023UserLib\SF2023UserLib.csproj", "{78888C8E-27AA-4774-B2BC-2118BDAAF4D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SF2023UserLib.Test", "..\SF2023UserLib.Test\SF2023UserLib.Test.csproj", "{71576EC2-098E-44D0-92E6-B7828510C87F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{78888C8E-27AA-4774-B2BC-2118BDAAF4D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78888C8E-27AA-4774-B2BC-2118BDAAF4D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78888C8E-27AA-4774-B2BC-2118BDAAF4D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71576EC2-098E-44D0-92E6-B7828510C87F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71576EC2-098E-44D0-92E6-B7828510C87F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71576EC2-098E-44D0-92E6-B7828510C87F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71576EC2-098E-44D0-92E6-B7828510C87F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
